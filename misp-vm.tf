@@ -43,6 +43,23 @@ resource "azurerm_network_security_group" "MISP-NSG" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
+
+  security_rule {
+    name                       = "Allow-Required-Outbound-Traffic"
+    priority                   = 100
+    direction                  = "Outbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "443-445"
+    source_address_prefix      = "*"
+    destination_address_prefix = "AzureCloud"
+  }
+}
+
+resource "azurerm_subnet_network_security_group_association" "MISP-NSG-Association" {
+  subnet_id                 = azurerm_subnet.MISP-internal.id
+  network_security_group_id = azurerm_network_security_group.MISP-NSG.id
 }
 
 # Linux VM NIC for MISP - Threat Intelligence Platform
@@ -65,7 +82,7 @@ resource "azurerm_linux_virtual_machine" "MISP-VM" {
   name                  = "${var.prefix}-MISP-VM"
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name
-  size                  = "Standard_B1s"
+  size                  = "Standard_D2s_v3"
   admin_username        = "Synpathy-Ubuntu"           # Store these more securely
   admin_password        = "J!!L9&paoBRiD3Vq"   # <----------
   network_interface_ids = [azurerm_network_interface.MISP-NIC.id]
@@ -78,8 +95,8 @@ resource "azurerm_linux_virtual_machine" "MISP-VM" {
 
   source_image_reference {
     publisher = "canonical"
-    offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts-gen2"
+    offer     = "ubuntu-24_04-lts"
+    sku       = "server"
     version   = "latest"
   }
 }
@@ -148,4 +165,12 @@ fi
 echo "MISP installation completed successfully"
     EOT
   }
+  timeouts {
+    create = "60m"
+  }
+
+  depends_on = [ 
+    azurerm_linux_virtual_machine.MISP-VM 
+  ]
+
 }

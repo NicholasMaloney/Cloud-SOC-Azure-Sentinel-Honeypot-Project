@@ -30,6 +30,23 @@ resource "azurerm_virtual_machine_extension" "log_Analytics_Agent" {
   PROTECTED_SETTINGS
 }
 
+# Add Windows Event Logs data source - HP VM Security Events
+resource "azurerm_log_analytics_datasource_windows_event" "security_events" {
+  name                = "${var.prefix}-security-events"
+  resource_group_name = azurerm_resource_group.rg.name
+  workspace_name      = azurerm_log_analytics_workspace.LogAnalytics.name
+  event_log_name      = "Microsoft-Windows-Security-Auditing"
+  event_types        = ["Error", "Warning", "Information"]
+
+  depends_on = [
+    azurerm_log_analytics_workspace.LogAnalytics
+  ]
+
+  timeouts {
+    create = "30m"
+  }
+}
+
 # Onboard Log Analytics Workspace to Microsoft Sentinel
 resource "azurerm_sentinel_log_analytics_workspace_onboarding" "Sentinel" {
   workspace_id = azurerm_log_analytics_workspace.LogAnalytics.id
@@ -57,7 +74,7 @@ resource "azurerm_log_analytics_solution" "SecurityInsights" {
 
 # Create Sentinel Rule - Successful RDP Login - Win 10 HP VM 
 resource "azurerm_sentinel_alert_rule_scheduled" "successful_rdp_login" {
- name                       = "${var.prefix}-SuccessfulRDPLogin"
+ name                       = "${var.prefix}-SuccessfulRDPLogin-Alert"
  log_analytics_workspace_id = azurerm_log_analytics_workspace.LogAnalytics.id
  display_name               = "Successful RDP Login"
  severity                   = "High"
@@ -68,45 +85,28 @@ resource "azurerm_sentinel_alert_rule_scheduled" "successful_rdp_login" {
 SecurityEvent | 
     where Activity contains "success" and Account !contains "system"
 QUERY
+
   depends_on = [
     azurerm_sentinel_log_analytics_workspace_onboarding.Sentinel,
-    azurerm_log_analytics_workspace.LogAnalytics
+    azurerm_log_analytics_workspace.LogAnalytics,
+    azurerm_log_analytics_solution.SecurityInsights,
+    azurerm_virtual_machine_extension.log_Analytics_Agent
   ]
+
+  timeouts {
+    create = "60m"
+  }
 
  trigger_operator       = "GreaterThan"
  trigger_threshold      = 0
  suppression_duration   = "PT5H"
- suppression_enabled    = true
+ description            = "Terraform - Alert on successful RDP login"
+ suppression_enabled    = false
+
  event_grouping {
    aggregation_method = "SingleAlert"
  }
-
+ 
 }
 
 # Create Sentinel Rule - Failed RDP Login - Win 10 HP VM 
-resource "azurerm_sentinel_alert_rule_scheduled" "Failed_rdp_login" {
- name                       = "${var.prefix}-FailedRDPLogin"
- log_analytics_workspace_id = azurerm_log_analytics_workspace.LogAnalytics.id
- display_name               = "Failed RDP Login"
- severity                   = "Medium"
- tactics                    = ["CredentialAccess"] 
- query_frequency            = "PT5M"
- query_period               = "PT5M"
- query =                    <<QUERY
-SecurityEvent
-  | where EventID == 4625
-  | summarize count() by TargetAccount, Computer, _ResourceID
-QUERY
-  depends_on = [
-    azurerm_sentinel_log_analytics_workspace_onboarding.Sentinel,
-    azurerm_log_analytics_workspace.LogAnalytics
- ]
-
-  trigger_operator       = "GreaterThan"
-  trigger_threshold      = 5  # Alert after 5 failed attempts
-  suppression_duration   = "PT5H"
-  suppression_enabled    = true
-  event_grouping {
-    aggregation_method = "SingleAlert"
-  }
-}

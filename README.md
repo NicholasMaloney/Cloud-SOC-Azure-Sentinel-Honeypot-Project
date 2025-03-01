@@ -10,3 +10,5 @@ Key Features:
 - Infrastructure as Code (Terraform) implementation for automated deployment
 
 The project showcases practical security monitoring, SIEM implementation, and infrastructure automation while providing hands-on experience with Azure security tools and services.
+
+~ Work in progress

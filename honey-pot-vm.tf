@@ -44,6 +44,18 @@ resource "azurerm_network_security_group" "HP-NSG" {
         source_address_prefix      = "*"
         destination_address_prefix = "*"
     }
+
+    security_rule {
+        name                        = "AllowAzureMonitor"
+        priority                    = 100
+        direction                   = "Outbound"
+        access                      = "Allow"
+        protocol                    = "Tcp"
+        source_port_range           = "*"
+        destination_port_range      = "443"
+        source_address_prefix       = "*"
+        destination_address_prefix  = "AzureMonitor"
+    }
 }
 
 resource "azurerm_subnet_network_security_group_association" "HP-NSG-Association" {
@@ -76,6 +88,11 @@ resource "azurerm_windows_virtual_machine" "HP-WS1" {
   size                  = "Standard_B1s"
   admin_username        = "Synpathy"           # Store these more securely
   admin_password        = "J!!L9&paoBRiD3Vq"   # <----------
+  vm_agent_platform_updates_enabled = true
+
+    identity {
+    type = "SystemAssigned"
+  }
 
   os_disk {
     caching              = "ReadWrite"

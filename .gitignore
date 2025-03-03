@@ -182,3 +182,5 @@ host.json
 Cloud-SOC-TF-Plan
 terraform.tfstate
 terraform.tfstate.backup
+test.tf
+.terraform.tfstate.lock.info

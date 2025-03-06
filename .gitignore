@@ -174,7 +174,7 @@ cython_debug/
 packages-microsoft-prod.deb
 .funcignore
 Az-Functions/.gitignore
-.vscode/
+
 local.settings.json
 host.json
 .terraform
@@ -184,3 +184,13 @@ terraform.tfstate
 terraform.tfstate.backup
 test.tf
 .terraform.tfstate.lock.info
+misp2sentinel
+
+terraform.tfstate.backup
+misp2sentinel
+.misp2sentinel
+*/misp2sentinel/*
+Cloud-SOC/misp2sentinel
+/home/synpathy/Cloud-SOC/misp2sentinel/AzureFunction/local.settings.json
+.vscode
+.vscode/*

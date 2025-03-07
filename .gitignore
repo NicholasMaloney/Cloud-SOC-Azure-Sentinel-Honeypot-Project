@@ -194,3 +194,7 @@ Cloud-SOC/misp2sentinel
 /home/synpathy/Cloud-SOC/misp2sentinel/AzureFunction/local.settings.json
 .vscode
 .vscode/*
+sentinel
+/home/synpathy/Cloud-SOC/misp2sentinel/
+Cloud-SOC/misp2sentinel/
+Cloud-SOC/misp2sentinel/*

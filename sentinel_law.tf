@@ -10,8 +10,6 @@ resource "azurerm_log_analytics_workspace" "LogAnalytics" {
   
 }
 
-
-
 # Install Azure Monitor Agent on Windows VM
 resource "azurerm_virtual_machine_extension" "AMA" {
   name                       = "AzureMonitorWindowsAgent"
@@ -108,7 +106,7 @@ resource "azurerm_sentinel_log_analytics_workspace_onboarding" "Sentinel" {
 
 # Create Sentinel Rule - Successful RDP Login - Win 10 HP VM 
 resource "azurerm_sentinel_alert_rule_scheduled" "successful_rdp_login" {
- name                       = "${var.prefix}-SuccessfulRDPLogin-HP"
+ name                       = "${var.prefix}-SuccessfulRDPLogin"
  log_analytics_workspace_id = azurerm_log_analytics_workspace.LogAnalytics.id
  display_name               = "Successful RDP Login"
  severity                   = "High"

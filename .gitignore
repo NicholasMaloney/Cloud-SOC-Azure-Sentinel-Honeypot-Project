@@ -198,3 +198,4 @@ sentinel
 /home/synpathy/Cloud-SOC/misp2sentinel/
 Cloud-SOC/misp2sentinel/
 Cloud-SOC/misp2sentinel/*
+./log_analytics.tf

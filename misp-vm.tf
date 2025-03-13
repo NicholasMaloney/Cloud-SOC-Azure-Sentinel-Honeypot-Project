@@ -14,22 +14,22 @@ resource "azurerm_subnet" "MISP-internal" {
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.MISP-Network.name
   address_prefixes     = ["10.0.3.0/24"]
-  
+
 }
 
 # Create a public IP address - This will be assigned to the Ubuntu VM
 resource "azurerm_public_ip" "MISP_public_ip" {
-  name                 = "${var.prefix}-MISP-PublicIP"
-  location             = azurerm_resource_group.rg.location
-  resource_group_name  = azurerm_resource_group.rg.name
-  allocation_method    = "Static"
-  sku                  = "Standard" 
-  
+  name                = "${var.prefix}-MISP-PublicIP"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+
 }
 # Unbuntu Server (MISP) Network Security Group (NSG) - Allows HTTPS traffic on port 443 so you can access the MISP web interface
 resource "azurerm_network_security_group" "MISP-NSG" {
-  name = "${var.prefix}-MISP-NSG"
-  location = azurerm_resource_group.rg.location
+  name                = "${var.prefix}-MISP-NSG"
+  location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
   security_rule {
@@ -64,33 +64,33 @@ resource "azurerm_subnet_network_security_group_association" "MISP-NSG-Associati
 
 # Linux VM NIC for MISP - Threat Intelligence Platform
 resource "azurerm_network_interface" "MISP-NIC" {
-  name                 = "${var.prefix}-MISP-NIC"
-  location             = azurerm_resource_group.rg.location
-  resource_group_name  = azurerm_resource_group.rg.name
+  name                = "${var.prefix}-MISP-NIC"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
 
-    ip_configuration {
+  ip_configuration {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.MISP-internal.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.MISP_public_ip.id
-    }
+  }
 
 }
 
 # Ubuntu VM for MISP - Threat Intelligence Platform
 resource "azurerm_linux_virtual_machine" "MISP-VM" {
-  name                  = "${var.prefix}-MISP-VM"
-  location              = azurerm_resource_group.rg.location
-  resource_group_name   = azurerm_resource_group.rg.name
-  size                  = "Standard_D2s_v3"
-  admin_username        = "Synpathy-Ubuntu"           # Store these more securely
-  admin_password        = "J!!L9&paoBRiD3Vq"   # <----------
-  network_interface_ids = [azurerm_network_interface.MISP-NIC.id]
+  name                            = "${var.prefix}-MISP-VM"
+  location                        = azurerm_resource_group.rg.location
+  resource_group_name             = azurerm_resource_group.rg.name
+  size                            = "Standard_D2s_v3"
+  admin_username                  = "Synpathy-Ubuntu"  # Store these more securely
+  admin_password                  = "J!!L9&paoBRiD3Vq" # <----------
+  network_interface_ids           = [azurerm_network_interface.MISP-NIC.id]
   disable_password_authentication = false
 
   os_disk {
     caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"  
+    storage_account_type = "Standard_LRS"
   }
 
   source_image_reference {
@@ -169,8 +169,8 @@ echo "MISP installation completed successfully"
     create = "60m"
   }
 
-  depends_on = [ 
-    azurerm_linux_virtual_machine.MISP-VM 
+  depends_on = [
+    azurerm_linux_virtual_machine.MISP-VM
   ]
 
 }

@@ -10,21 +10,21 @@ variable "url" {
 }
 
 variable "sub-ID" {
-  type    = string
-  default = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-  
+  type = string
+
+
 }
 
 variable "tenant_id" {
-  type    = string
-  default = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-  
+  type = string
+
+
 }
 
 variable "rg-name" {
   type    = string
   default = "Cloud-SOC-Resources"
-  
+
 }
 
 variable "la-name" {

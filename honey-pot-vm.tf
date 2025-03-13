@@ -18,44 +18,44 @@ resource "azurerm_subnet" "HP-internal" {
 
 #  Win 10 honeypot VM public IP address 
 resource "azurerm_public_ip" "HP-public_ip" {
-  name                 = "${var.prefix}-HP-PublicIP"
-  location             = azurerm_resource_group.rg.location
-  resource_group_name  = azurerm_resource_group.rg.name
-  allocation_method    = "Static"
-  sku                  = "Standard"
-  
+  name                = "${var.prefix}-HP-PublicIP"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+
 }
 
 
 # Win 10 honeypot VM Network Security Group (NSG) | Exposes/Allows RDP to public internet 
 resource "azurerm_network_security_group" "HP-NSG" {
-    name                = "${var.prefix}-HP-NSG"
-    location            = azurerm_resource_group.rg.location
-    resource_group_name = azurerm_resource_group.rg.name
-    
-    security_rule {
-        name                       = "RDP"
-        priority                   = 1001
-        direction                  = "Inbound"
-        access                     = "Allow"
-        protocol                   = "Tcp"
-        source_port_range          = "*"
-        destination_port_range     = "3389"
-        source_address_prefix      = "*"
-        destination_address_prefix = "*"
-    }
+  name                = "${var.prefix}-HP-NSG"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
 
-    security_rule {
-        name                        = "AllowAzureMonitor"
-        priority                    = 100
-        direction                   = "Outbound"
-        access                      = "Allow"
-        protocol                    = "Tcp"
-        source_port_range           = "*"
-        destination_port_range      = "443"
-        source_address_prefix       = "*"
-        destination_address_prefix  = "AzureMonitor"
-    }
+  security_rule {
+    name                       = "RDP"
+    priority                   = 1001
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "3389"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "AllowAzureMonitor"
+    priority                   = 100
+    direction                  = "Outbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "443"
+    source_address_prefix      = "*"
+    destination_address_prefix = "AzureMonitor"
+  }
 }
 
 resource "azurerm_subnet_network_security_group_association" "HP-NSG-Association" {
@@ -65,38 +65,38 @@ resource "azurerm_subnet_network_security_group_association" "HP-NSG-Association
 
 # Windows honeypot VM NIC | Specify the subnet private and public IP address
 resource "azurerm_network_interface" "HP-NIC" {
-  name                 = "${var.prefix}-HP-NIC"
-  location             = azurerm_resource_group.rg.location
-  resource_group_name  = azurerm_resource_group.rg.name
+  name                = "${var.prefix}-HP-NIC"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
 
-    ip_configuration {
+  ip_configuration {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.HP-internal.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.HP-public_ip.id
-    }
+  }
 
 }
 
 # Create a Windows 10 VM with RDP internet facing.
 # Note - In this release there's a known issue where the public_ip_address and public_ip_addresses fields may not  be fully populated for Dynamic Public IP's.
 resource "azurerm_windows_virtual_machine" "HP-WS1" {
-  name                  = "${var.prefix}-HPVM"
-  location              = azurerm_resource_group.rg.location
-  resource_group_name   = azurerm_resource_group.rg.name
-  network_interface_ids = [azurerm_network_interface.HP-NIC.id]
-  size                  = "Standard_B1s"
-  admin_username        = "Synpathy"           # Store these more securely
-  admin_password        = "J!!L9&paoBRiD3Vq"   # <----------
+  name                              = "${var.prefix}-HPVM"
+  location                          = azurerm_resource_group.rg.location
+  resource_group_name               = azurerm_resource_group.rg.name
+  network_interface_ids             = [azurerm_network_interface.HP-NIC.id]
+  size                              = "Standard_B1s"
+  admin_username                    = "Synpathy"         # Store these more securely
+  admin_password                    = "J!!L9&paoBRiD3Vq" # <----------
   vm_agent_platform_updates_enabled = true
 
-    identity {
+  identity {
     type = "SystemAssigned"
   }
 
   os_disk {
     caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"  
+    storage_account_type = "Standard_LRS"
   }
 
   source_image_reference {

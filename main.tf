@@ -1,30 +1,26 @@
-# Environment Configuration
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = ">=4.21.1"
-    }
-    azuread = {
-      source  = "hashicorp/azuread"
-      version = ">=3.1.0"
-    }
-  }
+# Main deployment file with modules
+
+# Modules
+module "honeypot" {
+  source = "./modules/honeypot"
 }
 
-# Configure the Microsoft Azure Provider
-provider "azurerm" {
-  features {
-    resource_group {
-      prevent_deletion_if_contains_resources = false
-    }
-  }
-  subscription_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+module "log-analytics" {
+  source = "./modules/log-analytics"
 }
 
-provider "azuread" {
-  tenant_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+module "misp" {
+  source = "./modules/misp"
 }
+
+module "network" {
+  source = "./modules/network"
+}
+
+module "sentinel" {
+  source = "./modules/sentinel"
+}
+
 # Create a resource group
 resource "azurerm_resource_group" "rg" {
   name     = "${var.prefix}-Resources"

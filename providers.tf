@@ -25,11 +25,11 @@ provider "azurerm" {
       prevent_deletion_if_contains_resources = false
     }
   }
-  subscription_id = data.azurerm_client_config.current.subscription_id
+  subscription_id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 }
 
 # Configure the Microsoft Azure Active Directory Provider
 provider "azuread" {
-  tenant_id = data.azuread_client_config.current.tenant_id
+  tenant_id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 }
 

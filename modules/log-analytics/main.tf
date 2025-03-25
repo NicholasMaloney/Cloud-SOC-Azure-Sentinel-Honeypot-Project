@@ -19,7 +19,7 @@ resource "azurerm_monitor_data_collection_rule" "HP-DCR" {
   name                = "${var.prefix}-HP-DCR"
   resource_group_name = var.rg_name
   location            = var.location
-  depends_on          = [azurerm_virtual_machine_extension.AMA-HP-WS1]
+  depends_on          = [var.AMA-HP-WS1]
   kind                = "Windows"
 
   destinations {

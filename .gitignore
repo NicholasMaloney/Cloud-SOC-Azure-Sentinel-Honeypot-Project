@@ -205,3 +205,6 @@ Cloud-SOC/tf-old/*
 ./tf-old/*
 ./tf-old/Azfunc.tf
 tf-old
+./SOC-refactor
+./SOC-refactor/*
+SOC-refactor

@@ -2,6 +2,8 @@
 
 #! bin/bash
 
+# Script to create the directories and files for the terraform modules
+
 : ' 
 cd modules/honeypot
 touch main.tf

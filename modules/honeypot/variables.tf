@@ -10,3 +10,15 @@ variable "location" {
 variable "rg_name" {
   type = string
 }
+
+variable "HP-NIC-ID" {
+  type = string
+
+}
+
+variable "LaWrkSpc_id" {
+  type = string
+
+}
+
+

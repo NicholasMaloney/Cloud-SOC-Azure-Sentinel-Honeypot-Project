@@ -5,10 +5,10 @@
 
 # Honeypot VM      
 resource "azurerm_windows_virtual_machine" "HP-VM" {
-  name                              = "${var.prefix}-HPVM"
+  name                              = "${var.prefix}-HP-VM"
   location                          = var.location
   resource_group_name               = var.rg_name
-  network_interface_ids             = [azurerm_network_interface.HP-NIC.id]
+  network_interface_ids             = [var.HP-NIC-ID]
   size                              = "Standard_B1s"
   admin_username                    = "Synpathy"
   admin_password                    = "J!!L9&paoBRiD3Vq"
@@ -41,11 +41,11 @@ resource "azurerm_virtual_machine_extension" "AMA-HP-WS1" {
   type_handler_version       = "1.32"
   auto_upgrade_minor_version = true
 
-  depends_on = [azurerm_windows_virtual_machine.HP-WS1]
+  depends_on = [azurerm_windows_virtual_machine.HP-VM]
 
   settings = <<SETTINGS
     {
-      "workspaceId": "${azurerm_log_analytics_workspace.LogAnalytics.workspace_id}"
+      "workspaceId": "${var.LaWrkSpc_id}"
     }
   SETTINGS
 }

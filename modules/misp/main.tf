@@ -7,7 +7,7 @@ resource "azurerm_linux_virtual_machine" "MISP-VM" {
   size                            = "Standard_D2s_v3"
   admin_username                  = "Synpathy-Ubuntu"  # Store these more securely
   admin_password                  = "J!!L9&paoBRiD3Vq" # <----------
-  network_interface_ids           = [azurerm_network_interface.MISP-NIC.id]
+  network_interface_ids           = [var.MISP-NIC-ID]
   disable_password_authentication = false
 
   os_disk {

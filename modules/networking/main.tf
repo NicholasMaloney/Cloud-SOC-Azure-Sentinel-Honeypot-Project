@@ -13,7 +13,7 @@ resource "azurerm_subnet" "HP-sNet" {
   name                 = "${var.prefix}-HP-sNet"
   resource_group_name  = var.rg_name
   virtual_network_name = azurerm_virtual_network.HP-vNet.name
-  address_prefixes     = ["10.100.1.0/24"]
+  address_prefixes     = ["10.100.0.0/24"]
 }
 
 # Honeypot Public IP address
@@ -92,7 +92,7 @@ resource "azurerm_subnet" "MISP-sNet" {
   name                 = "${var.prefix}-MISP-sNet"
   resource_group_name  = var.rg_name
   virtual_network_name = azurerm_virtual_network.MISP-vNet.name
-  address_prefixes     = ["10.200.1.0/24"]
+  address_prefixes     = ["10.200.0.0/24"]
 }
 
 # MISP Public IP address

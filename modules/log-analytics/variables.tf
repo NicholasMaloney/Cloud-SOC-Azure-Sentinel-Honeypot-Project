@@ -13,3 +13,7 @@ variable "rg_name" {
 variable "HP-VM-ID" {
   type = string
 }
+
+variable "AMA-HP-WS1" {
+  type = string
+}
